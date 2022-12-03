@@ -1,11 +1,12 @@
 import {Application,json,urlencoded,Response,Request,NextFunction} from 'express';
+import { config } from './../config';
 import * as http from 'http';
 import * as cookieSession from 'cookie-session';
 import * as helmet from 'helmet';
 import * as hpp from 'hpp';
 import * as cors from 'cors';
 import * as compression from 'compression';
-const SERVER_PORT=5000;
+const SERVER_PORT=config.PORT;
 export class ChattyServer{
      //method variable:returnType;
      private app : Application;
@@ -26,9 +27,9 @@ export class ChattyServer{
      private securityMiddleware(app:Application):void {
           app.use(cookieSession({
             name:'session' ,//cookie session name(store user data in browser cookies)
-            keys: ['test1','test2'],
+            keys: [config.SECRET_KEY_1,config.SECRET_KEY_2],
             maxAge:24*7*3600000, //expiry time in milliseconds(604800000 ms = 7 days)
-            secure:false
+            secure:config.NODE_ENV!=='development'
           }));
           app.use(helmet());//add more headers and hide sensitive information
           app.use(hpp());//prevent same query names 

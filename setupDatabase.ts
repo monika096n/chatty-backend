@@ -1,9 +1,10 @@
 import mongoose from 'mongoose';
+import { config } from './config';
 
 export default ()=>{
     function connectToDB(){
         console.log('Trying to connect Mongo Db! ')
-        mongoose.connect('mongodb://localhost:27017/chatty-backend')
+        mongoose.connect(`${config.DATABASE_URL}`)
         .then(()=>{
             console.log('123!')
             console.log('Connected to Mongo database Successfully! ')
