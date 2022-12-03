@@ -6,6 +6,10 @@ import * as helmet from 'helmet';
 import * as hpp from 'hpp';
 import * as cors from 'cors';
 import * as compression from 'compression';
+import { Server } from 'socket.io'; //socket.io.Server connection
+import { createClient } from 'redis'; //redis for fetching instant chats
+import { createAdapter } from '@socket.io/redis-adapter'; 
+//redis adapter connection for direct communication between chats and redis 
 const SERVER_PORT=config.PORT;
 export class ChattyServer{
      //method variable:returnType;
@@ -36,6 +40,7 @@ export class ChattyServer{
           app.use(cors({
             origin:"*",
             credentials:true,
+            method:['GET', 'PUT','POST','DELETE','OPTIONS'],
             optionsSuccessStatus: 200,// for some legacy browsers (IE11, various SmartTVs) 
           }))
      }
@@ -55,13 +60,29 @@ export class ChattyServer{
 
      }
 
-     private createSocketIO(httpServer : http.Server):void {
+     private async createSocketIO(httpServer : http.Server): Promise<Server> {
+      const io:Server = new Server(httpServer,{
+         cors:{
+            origin:config.CLIENT_URL,
+            method:['GET', 'PUT','POST','DELETE','OPTIONS'],
+         }
+      });//server from socket.io
 
+      const pubClient = createClient({ host: config.REDIS_HOST });//publish socket connection
+      const subClient = pubClient.duplicate();//Duplicate same connection for subscribing incoming chats
+      
+      await Promise.all([pubClient.connect(), subClient.connect()]);
+      io.adapter(createAdapter(pubClient, subClient));
+      console.log("Created IO!",io);
+      return io;
      }
+
     private async startServer(app : Application) : Promise<void>{
         try{
               const httpServer : http.Server = new http.Server(app);
-              this.startHttpServer(httpServer)
+              const socketIO:Server = await this.createSocketIO(httpServer)
+              this.startHttpServer(httpServer);
+              this.SocketIOConnections(socketIO)
         }
         catch(error){
              console.log(error);
@@ -70,9 +91,13 @@ export class ChattyServer{
 
     }
      private startHttpServer(httpServer : http.Server) : void{
+        console.log('httpServer started with pid at:  ',process.pid);
         httpServer.listen(SERVER_PORT,()=>{
-            console.log('server listening on port ',SERVER_PORT); 
+            console.log('server listening on port at',SERVER_PORT); 
          })
+     }
+
+     private SocketIOConnections(io:Socket):void {
      }
 
 }

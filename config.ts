@@ -10,6 +10,7 @@ class Config{
   public SECRET_KEY_1 : string  | undefined; 
   public SECRET_KEY_2 : string  | undefined; 
   public CLIENT_URL : string  | undefined; 
+  public REDIS_HOST : string  | undefined;
   private readonly DEFAULT_DB_URL : string ='mongodb://localhost:27017/chatty-backend'
   constructor(){
     this.DATABASE_URL=process.env.DATABASE_URL || this.DEFAULT_DB_URL;
@@ -19,11 +20,13 @@ class Config{
     this.JWT_TOKEN=process.env.JWT_TOKEN||'';
     this.NODE_ENV=process.env.NODE_ENV||'development';
     this.PORT=process.env.PORT|| '5000';
+    this.REDIS_HOST=process.env.REDIS_HOST||'';
+
   }
 
   public validateConfig(): void {
      for(const [key,value] of Object.keys(this)){
-        if(value===undefined){
+        if(value===undefined||value===null||value===''){
              throw new Error(`Invalid configuration for ${key}`);
         }
 
