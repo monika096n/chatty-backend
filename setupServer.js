@@ -38,13 +38,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 exports.ChattyServer = void 0;
 var express_1 = require("express");
+var config_1 = require("./config");
 var http = require("http");
-var cookieSession = require("cookie-session");
+iconst;
+cookieSession = require('cookie-session');
 var helmet = require("helmet");
 var hpp = require("hpp");
 var cors = require("cors");
 var compression = require("compression");
-var SERVER_PORT = 5000;
+var socket_io_1 = require("socket.io"); //socket.io.Server connection
+var redis_1 = require("redis"); //redis for fetching instant chats
+var redis_adapter_1 = require("@socket.io/redis-adapter");
+//redis adapter connection for direct communication between chats and redis 
+var SERVER_PORT = config_1.config.PORT;
 var ChattyServer = /** @class */ (function () {
     function ChattyServer(app) {
         this.app = app;
@@ -60,15 +66,16 @@ var ChattyServer = /** @class */ (function () {
     ChattyServer.prototype.securityMiddleware = function (app) {
         app.use(cookieSession({
             name: 'session',
-            keys: ['test1', 'test2'],
+            keys: [config_1.config.SECRET_KEY_1, config_1.config.SECRET_KEY_2],
             maxAge: 24 * 7 * 3600000,
-            secure: false
+            secure: config_1.config.NODE_ENV !== 'development'
         }));
         app.use(helmet()); //add more headers and hide sensitive information
         app.use(hpp()); //prevent same query names 
         app.use(cors({
             origin: "*",
             credentials: true,
+            methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
             optionsSuccessStatus: 200
         }));
     };
@@ -82,27 +89,59 @@ var ChattyServer = /** @class */ (function () {
     ChattyServer.prototype.globalErrorHandler = function (app) {
     };
     ChattyServer.prototype.createSocketIO = function (httpServer) {
+        return __awaiter(this, void 0, void 0, function () {
+            var io, pubClient, subClient;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        io = new socket_io_1.Server(httpServer, {
+                            cors: {
+                                origin: config_1.config.CLIENT_URL,
+                                methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS']
+                            }
+                        });
+                        pubClient = (0, redis_1.createClient)({ url: config_1.config.REDIS_HOST });
+                        subClient = pubClient.duplicate();
+                        return [4 /*yield*/, Promise.all([pubClient.connect(), subClient.connect()])];
+                    case 1:
+                        _a.sent();
+                        io.adapter((0, redis_adapter_1.createAdapter)(pubClient, subClient));
+                        console.log("Created IO!", io);
+                        return [2 /*return*/, io];
+                }
+            });
+        });
     };
     ChattyServer.prototype.startServer = function (app) {
         return __awaiter(this, void 0, void 0, function () {
-            var httpServer;
+            var httpServer, socketIO, error_1;
             return __generator(this, function (_a) {
-                try {
-                    httpServer = new http.Server(app);
-                    this.startHttpServer(httpServer);
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        httpServer = new http.Server(app);
+                        return [4 /*yield*/, this.createSocketIO(httpServer)];
+                    case 1:
+                        socketIO = _a.sent();
+                        this.startHttpServer(httpServer);
+                        this.SocketIOConnections(socketIO);
+                        return [3 /*break*/, 3];
+                    case 2:
+                        error_1 = _a.sent();
+                        console.log(error_1);
+                        throw new Error(error_1);
+                    case 3: return [2 /*return*/];
                 }
-                catch (error) {
-                    console.log(error);
-                    throw new Error(error);
-                }
-                return [2 /*return*/];
             });
         });
     };
     ChattyServer.prototype.startHttpServer = function (httpServer) {
+        console.log('httpServer started with pid at:  ', process.pid);
         httpServer.listen(SERVER_PORT, function () {
-            console.log('server listening on port ', SERVER_PORT);
+            console.log('server listening on port at', SERVER_PORT);
         });
+    };
+    ChattyServer.prototype.SocketIOConnections = function (io) {
     };
     return ChattyServer;
 }());

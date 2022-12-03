@@ -1,8 +1,8 @@
 import {Application,json,urlencoded,Response,Request,NextFunction} from 'express';
-import { config } from './../config';
+import { config } from './config';
 import * as http from 'http';
-import * as cookieSession from 'cookie-session';
-import * as helmet from 'helmet';
+const  cookieSession = require('cookie-session');
+const helmet =require('helmet');
 import * as hpp from 'hpp';
 import * as cors from 'cors';
 import * as compression from 'compression';
@@ -40,7 +40,7 @@ export class ChattyServer{
           app.use(cors({
             origin:"*",
             credentials:true,
-            method:['GET', 'PUT','POST','DELETE','OPTIONS'],
+            methods:['GET', 'PUT','POST','DELETE','OPTIONS'],
             optionsSuccessStatus: 200,// for some legacy browsers (IE11, various SmartTVs) 
           }))
      }
@@ -64,11 +64,11 @@ export class ChattyServer{
       const io:Server = new Server(httpServer,{
          cors:{
             origin:config.CLIENT_URL,
-            method:['GET', 'PUT','POST','DELETE','OPTIONS'],
+            methods:['GET', 'PUT','POST','DELETE','OPTIONS'],
          }
       });//server from socket.io
 
-      const pubClient = createClient({ host: config.REDIS_HOST });//publish socket connection
+      const pubClient = createClient({  url: config.REDIS_HOST });//publish socket connection
       const subClient = pubClient.duplicate();//Duplicate same connection for subscribing incoming chats
       
       await Promise.all([pubClient.connect(), subClient.connect()]);
@@ -97,7 +97,7 @@ export class ChattyServer{
          })
      }
 
-     private SocketIOConnections(io:Socket):void {
+     private SocketIOConnections(io:Server):void {
      }
 
 }

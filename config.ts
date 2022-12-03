@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+const dotenv =require('dotenv');
 //import dotenv and reassign it in config file , to use it!
 dotenv.config({}) //make sure dotenv file in root directory
 
@@ -25,7 +25,7 @@ class Config{
   }
 
   public validateConfig(): void {
-     for(const [key,value] of Object.keys(this)){
+     for(const [key,value] of Object.entries(this)){
         if(value===undefined||value===null||value===''){
              throw new Error(`Invalid configuration for ${key}`);
         }
