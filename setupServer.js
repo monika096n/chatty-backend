@@ -40,9 +40,8 @@ exports.ChattyServer = void 0;
 var express_1 = require("express");
 var config_1 = require("./config");
 var http = require("http");
-iconst;
-cookieSession = require('cookie-session');
-var helmet = require("helmet");
+var cookieSession = require('cookie-session');
+var helmet = require('helmet');
 var hpp = require("hpp");
 var cors = require("cors");
 var compression = require("compression");
@@ -106,7 +105,7 @@ var ChattyServer = /** @class */ (function () {
                     case 1:
                         _a.sent();
                         io.adapter((0, redis_adapter_1.createAdapter)(pubClient, subClient));
-                        console.log("Created IO!", io);
+                        console.log("Created IO!");
                         return [2 /*return*/, io];
                 }
             });

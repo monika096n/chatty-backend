@@ -2,7 +2,7 @@ import {Application,json,urlencoded,Response,Request,NextFunction} from 'express
 import { config } from './config';
 import * as http from 'http';
 const  cookieSession = require('cookie-session');
-const helmet =require('helmet');
+const helmet = require('helmet');
 import * as hpp from 'hpp';
 import * as cors from 'cors';
 import * as compression from 'compression';
@@ -73,7 +73,7 @@ export class ChattyServer{
       
       await Promise.all([pubClient.connect(), subClient.connect()]);
       io.adapter(createAdapter(pubClient, subClient));
-      console.log("Created IO!",io);
+      console.log("Created IO!");
       return io;
      }
 
