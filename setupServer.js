@@ -49,6 +49,7 @@ var socket_io_1 = require("socket.io"); //socket.io.Server connection
 var redis_1 = require("redis"); //redis for fetching instant chats
 var redis_adapter_1 = require("@socket.io/redis-adapter");
 //redis adapter connection for direct communication between chats and redis 
+var routes_1 = require("./routes");
 var SERVER_PORT = config_1.config.PORT;
 var ChattyServer = /** @class */ (function () {
     function ChattyServer(app) {
@@ -84,6 +85,7 @@ var ChattyServer = /** @class */ (function () {
         app.use((0, express_1.urlencoded)({ extended: true, limit: '50mb' }));
     };
     ChattyServer.prototype.routesMiddleware = function (app) {
+        (0, routes_1["default"])(app);
     };
     ChattyServer.prototype.globalErrorHandler = function (app) {
     };

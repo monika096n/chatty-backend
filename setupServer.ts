@@ -10,6 +10,8 @@ import { Server } from 'socket.io'; //socket.io.Server connection
 import { createClient } from 'redis'; //redis for fetching instant chats
 import { createAdapter } from '@socket.io/redis-adapter'; 
 //redis adapter connection for direct communication between chats and redis 
+import applicationRoutes from './routes';
+
 const SERVER_PORT=config.PORT;
 export class ChattyServer{
      //method variable:returnType;
@@ -52,7 +54,7 @@ export class ChattyServer{
      }
 
      private routesMiddleware(app : Application):void {
-
+         applicationRoutes(app);
      }
 
 
