@@ -12,7 +12,9 @@ import { createAdapter } from '@socket.io/redis-adapter';
 //redis adapter connection for direct communication between chats and redis 
 import applicationRoutes from './routes';
 import * as HTTP_STATUS_CODE from 'http-status-codes';
-import {CustomError,IErrorResponse} from '../chatty-backend/src/shared/globals/helpers/errorHandler'
+import {CustomError,IErrorResponse} from '../chatty-backend/src/shared/globals/helpers/errorHandler';
+import * as bunyanLogger  from 'bunyan';
+const log:bunyanLogger=config.createLogger('setupServer');//log statement 
 
 const SERVER_PORT=config.PORT;
 export class ChattyServer{
@@ -66,7 +68,7 @@ export class ChattyServer{
              res.status(HTTP_STATUS_CODE.NOT_FOUND).json({ message: `${req.originalUrl} not found` });
            });
            app.use((error: IErrorResponse, req: Request, res: Response, next: NextFunction) => {
-            console.log(error);
+            log.error(error);
             if (error instanceof CustomError) {
               return res.status(error.statusCode).json(error.serializeErrors()); 
               next();
@@ -87,7 +89,7 @@ export class ChattyServer{
       
       await Promise.all([pubClient.connect(), subClient.connect()]);
       io.adapter(createAdapter(pubClient, subClient));
-      console.log("Created IO!");
+      log.info("Created IO!");
       return io;
      }
 
@@ -99,15 +101,15 @@ export class ChattyServer{
               this.SocketIOConnections(socketIO)
         }
         catch(error){
-             console.log(error);
+              log.error(error);
              throw new Error(error);
         }
 
     }
      private startHttpServer(httpServer : http.Server) : void{
-        console.log('httpServer started with pid at:  ',process.pid);
+        log.info('httpServer started with pid at:  ',process.pid);
         httpServer.listen(SERVER_PORT,()=>{
-            console.log('server listening on port at',SERVER_PORT); 
+            log.info('server listening on port at',SERVER_PORT); 
          })
      }
 

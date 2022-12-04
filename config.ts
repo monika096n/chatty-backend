@@ -1,7 +1,7 @@
 const dotenv =require('dotenv');
+import * as bunyan  from 'bunyan';
 //import dotenv and reassign it in config file , to use it!
 dotenv.config({}) //make sure dotenv file in root directory
-
 class Config{
   public DATABASE_URL : string  | undefined; 
   public JWT_TOKEN : string  | undefined; 
@@ -21,7 +21,9 @@ class Config{
     this.NODE_ENV=process.env.NODE_ENV||'development';
     this.PORT=process.env.PORT|| '5000';
     this.REDIS_HOST=process.env.REDIS_HOST||'';
-
+  }
+  public createLogger(name:string) : bunyan { //name:identifier for filename from console
+     return bunyan.createLogger({name,level:'debug'});
   }
 
   public validateConfig(): void {

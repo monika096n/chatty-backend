@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon -r tsconfig-paths/register src/app.ts"
+    "dev": "nodemon -r tsconfig-paths/register src/app.ts | ./node_modules/.bin/bunyan",
+     "compile":"npx tsc src/app.ts && node src/app.js | ./node_modules/.bin/bunyan"
   },
   "keywords": [],
   "author": "",
@@ -29,6 +30,7 @@
   },
   "dependencies": {
     "@socket.io/redis-adapter": "^7.2.0",
+    "bunyan": "^1.8.15",
     "compression": "^1.7.4",
     "cookie-session": "^2.0.0",
     "cors": "^2.8.5",

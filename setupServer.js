@@ -52,6 +52,7 @@ var redis_adapter_1 = require("@socket.io/redis-adapter");
 var routes_1 = require("./routes");
 var HTTP_STATUS_CODE = require("http-status-codes");
 var errorHandler_1 = require("../chatty-backend/src/shared/globals/helpers/errorHandler");
+var log = config_1.config.createLogger('setupServer'); //log statement 
 var SERVER_PORT = config_1.config.PORT;
 var ChattyServer = /** @class */ (function () {
     function ChattyServer(app) {
@@ -95,7 +96,7 @@ var ChattyServer = /** @class */ (function () {
             res.status(HTTP_STATUS_CODE.NOT_FOUND).json({ message: "".concat(req.originalUrl, " not found") });
         });
         app.use(function (error, req, res, next) {
-            console.log(error);
+            log.error(error);
             if (error instanceof errorHandler_1.CustomError) {
                 return res.status(error.statusCode).json(error.serializeErrors());
                 next();
@@ -120,7 +121,7 @@ var ChattyServer = /** @class */ (function () {
                     case 1:
                         _a.sent();
                         io.adapter((0, redis_adapter_1.createAdapter)(pubClient, subClient));
-                        console.log("Created IO!");
+                        log.info("Created IO!");
                         return [2 /*return*/, io];
                 }
             });
@@ -142,7 +143,7 @@ var ChattyServer = /** @class */ (function () {
                         return [3 /*break*/, 3];
                     case 2:
                         error_1 = _a.sent();
-                        console.log(error_1);
+                        log.error(error_1);
                         throw new Error(error_1);
                     case 3: return [2 /*return*/];
                 }
@@ -150,9 +151,9 @@ var ChattyServer = /** @class */ (function () {
         });
     };
     ChattyServer.prototype.startHttpServer = function (httpServer) {
-        console.log('httpServer started with pid at:  ', process.pid);
+        log.info('httpServer started with pid at:  ', process.pid);
         httpServer.listen(SERVER_PORT, function () {
-            console.log('server listening on port at', SERVER_PORT);
+            log.info('server listening on port at', SERVER_PORT);
         });
     };
     ChattyServer.prototype.SocketIOConnections = function (io) {
