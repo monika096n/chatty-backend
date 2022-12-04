@@ -50,6 +50,8 @@ var redis_1 = require("redis"); //redis for fetching instant chats
 var redis_adapter_1 = require("@socket.io/redis-adapter");
 //redis adapter connection for direct communication between chats and redis 
 var routes_1 = require("./routes");
+var HTTP_STATUS_CODE = require("http-status-codes");
+var errorHandler_1 = require("../chatty-backend/src/shared/globals/helpers/errorHandler");
 var SERVER_PORT = config_1.config.PORT;
 var ChattyServer = /** @class */ (function () {
     function ChattyServer(app) {
@@ -88,6 +90,17 @@ var ChattyServer = /** @class */ (function () {
         (0, routes_1["default"])(app);
     };
     ChattyServer.prototype.globalErrorHandler = function (app) {
+        //if any error found in any type of api 
+        app.all('*', function (req, res) {
+            res.status(HTTP_STATUS_CODE.NOT_FOUND).json({ message: "".concat(req.originalUrl, " not found") });
+        });
+        app.use(function (error, req, res, next) {
+            console.log(error);
+            if (error instanceof errorHandler_1.CustomError) {
+                return res.status(error.statusCode).json(error.serializeErrors());
+                next();
+            }
+        });
     };
     ChattyServer.prototype.createSocketIO = function (httpServer) {
         return __awaiter(this, void 0, void 0, function () {

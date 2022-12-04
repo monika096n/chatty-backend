@@ -11,6 +11,8 @@ import { createClient } from 'redis'; //redis for fetching instant chats
 import { createAdapter } from '@socket.io/redis-adapter'; 
 //redis adapter connection for direct communication between chats and redis 
 import applicationRoutes from './routes';
+import * as HTTP_STATUS_CODE from 'http-status-codes';
+import {CustomError,IErrorResponse} from '../chatty-backend/src/shared/globals/helpers/errorHandler'
 
 const SERVER_PORT=config.PORT;
 export class ChattyServer{
@@ -59,7 +61,17 @@ export class ChattyServer{
 
 
      private globalErrorHandler(app : Application):void {
-
+           //if any error found in any type of api 
+           app.all('*',(req:Request, res:Response) => {
+             res.status(HTTP_STATUS_CODE.NOT_FOUND).json({ message: `${req.originalUrl} not found` });
+           });
+           app.use((error: IErrorResponse, req: Request, res: Response, next: NextFunction) => {
+            console.log(error);
+            if (error instanceof CustomError) {
+              return res.status(error.statusCode).json(error.serializeErrors()); 
+              next();
+            }
+          });
      }
 
      private async createSocketIO(httpServer : http.Server): Promise<Server> {
