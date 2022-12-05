@@ -1,15 +1,16 @@
-const dotenv =require('dotenv');
+/* eslint-disable semi */
+import * as dotenv  from 'dotenv';
 import * as bunyan  from 'bunyan';
 //import dotenv and reassign it in config file , to use it!
 dotenv.config({}) //make sure dotenv file in root directory
 class Config{
-  public DATABASE_URL : string  | undefined; 
-  public JWT_TOKEN : string  | undefined; 
-  public NODE_ENV : string  | undefined; 
+  public DATABASE_URL : string  | undefined;
+  public JWT_TOKEN : string  | undefined;
+  public NODE_ENV : string  | undefined;
   public PORT : string | undefined;
-  public SECRET_KEY_1 : string  | undefined; 
-  public SECRET_KEY_2 : string  | undefined; 
-  public CLIENT_URL : string  | undefined; 
+  public SECRET_KEY_1 : string  | undefined;
+  public SECRET_KEY_2 : string  | undefined;
+  public CLIENT_URL : string  | undefined;
   public REDIS_HOST : string  | undefined;
   private readonly DEFAULT_DB_URL : string ='mongodb://localhost:27017/chatty-backend'
   constructor(){
