@@ -1,7 +1,7 @@
-import { config } from './../config';
-import { ChattyServer } from './../setupServer';
 import express = require('express');
-import databaseConnection from './../setupDatabase';
+import { config } from '@root/config';
+import { ChattyServer } from '@root/setupServer';
+import databaseConnection from '@root/setupDatabase';
 class Application {
   public initialize(): void {
     this.loadConfig(); //loading all configuration values from env->config->app level use
@@ -12,6 +12,7 @@ class Application {
   }
   private loadConfig(): void {
     config.validateConfig();
+    config.cloudinaryConfig();
   }
 }
 const application: Application = new Application();
