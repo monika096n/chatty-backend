@@ -40,7 +40,7 @@ export class ChattyServer{
             name:'session' ,//cookie session name(store user data in browser cookies)
             keys: [config.SECRET_KEY_1!,config.SECRET_KEY_2!],
             maxAge:24*7*3600000, //expiry time in milliseconds(604800000 ms = 7 days)
-            secure:config.NODE_ENV!=='development'
+            secure:config.NODE_ENV!=='development' //https
           }));
           app.use(helmet());//add more headers and hide sensitive information
           app.use(hpp());//prevent same query names
@@ -68,10 +68,10 @@ export class ChattyServer{
            app.all('*',(req:Request, res:Response) => {
              res.status(HTTP_STATUS_CODE.NOT_FOUND).json({ message: `${req.originalUrl} not found` });
            });
-           app.use((error: IErrorResponse, req: Request, res: Response, next: NextFunction) => {
+           app.use((error: IErrorResponse, req: Request, res: Response, next: NextFunction) => { //application level error Handler-> invokes when throw Error()
             log.error(error);
             if (error instanceof CustomError) {
-              return res.status(error.statusCode).json(error.serializeErrors());
+              return res.status(error.statusCode).json(error.serializeErrors());//frontend handling purpose!
               next();
             }
           });
@@ -85,7 +85,7 @@ export class ChattyServer{
          }
       });//server from socket.io
 
-      const pubClient = createClient({  url: config.REDIS_HOST });//publish socket connection
+      const pubClient = createClient({  url: config.REDIS_HOST });//publish socket connection and redis connection establishment this port
       const subClient = pubClient.duplicate();//Duplicate same connection for subscribing incoming chats
 
       await Promise.all([pubClient.connect(), subClient.connect()]);
@@ -154,3 +154,4 @@ export class ChattyServer{
 //         firstname: [ 'John', 'Alice' ]
 //     }
 // }
+

@@ -1,9 +1,12 @@
 /* eslint-disable semi */
 import * as dotenv  from 'dotenv';
 import * as bunyan  from 'bunyan';
+import cloudinary from 'cloudinary';
 //import dotenv and reassign it in config file , to use it!
 dotenv.config({}) //make sure dotenv file in root directory
 class Config{
+
+  //declaration of variables type
   public DATABASE_URL : string  | undefined;
   public JWT_TOKEN : string  | undefined;
   public NODE_ENV : string  | undefined;
@@ -12,8 +15,13 @@ class Config{
   public SECRET_KEY_2 : string  | undefined;
   public CLIENT_URL : string  | undefined;
   public REDIS_HOST : string  | undefined;
+  public CLOUD_NAME:string | undefined;
+  public CLOUD_API_KEY:string | undefined;
+  public CLOUD_API_SECRET:string | undefined;
+
   private readonly DEFAULT_DB_URL : string ='mongodb://localhost:27017/chatty-backend'
   constructor(){
+    //defining values for variables
     this.DATABASE_URL=process.env.DATABASE_URL || this.DEFAULT_DB_URL;
     this.SECRET_KEY_1=process.env.SECRET_KEY_1 || '';
     this.SECRET_KEY_2=process.env.SECRET_KEY_2 || '';
@@ -22,6 +30,9 @@ class Config{
     this.NODE_ENV=process.env.NODE_ENV||'development';
     this.PORT=process.env.PORT|| '5000';
     this.REDIS_HOST=process.env.REDIS_HOST||'';
+    this.CLOUD_NAME=process.env.CLOUD_NAME||'';
+    this.CLOUD_API_KEY=process.env.CLOUD_API_KEY||'';
+    this.CLOUD_API_SECRET=process.env.CLOUD_API_SECRET||'';
   }
   public createLogger(name:string) : bunyan { //name:identifier for filename from console
      return bunyan.createLogger({name,level:'debug'});
@@ -34,6 +45,15 @@ class Config{
         }
 
      }
+  }
+  public cloudinaryConfig(): void {
+    console.log('Configuring cloudinary');
+    cloudinary.v2.config({
+      cloud_name:this.CLOUD_NAME,
+      api_key:this.CLOUD_API_KEY,
+      secret_key:this.CLOUD_API_SECRET,
+      secure:this.NODE_ENV!=='development' ? true : false
+    })
   }
 }
 

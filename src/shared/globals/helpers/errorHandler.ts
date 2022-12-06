@@ -1,6 +1,6 @@
 import * as HTTP_STATUS_CODE from 'http-status-codes';
 
-export interface IErrorResponse {
+export interface IErrorResponse {//expected data format - Only Declarations , no definitions
   message: string;
   statusCode: number;
   status: string;
