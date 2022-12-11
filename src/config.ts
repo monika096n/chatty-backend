@@ -1,7 +1,7 @@
 /* eslint-disable semi */
 import * as dotenv  from 'dotenv';
-import * as bunyan  from 'bunyan';
-import cloudinary from 'cloudinary';
+import * as bunyan  from 'bunyan';//CLI Logger!
+import cloudinary from 'cloudinary';//cloudinary to upload chatty images or videos
 //import dotenv and reassign it in config file , to use it!
 dotenv.config({}) //make sure dotenv file in root directory
 class Config{

@@ -4,7 +4,7 @@ import { config } from '@root/config';
 import * as http from 'http';
 import  cookieSession from 'cookie-session';
 import   helmet from 'helmet';//hides sensitive headers
-import  hpp from 'hpp';//http-parameter-populated
+import  hpp from 'hpp';//http-parameter-pollulated
 import cors from 'cors';//cross-origin request allowance
 import compression from 'compression'; //compress the data sent and receive
 import { Server } from 'socket.io'; //socket.io.Server connection
