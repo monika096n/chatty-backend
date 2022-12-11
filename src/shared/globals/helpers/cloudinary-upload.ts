@@ -1,6 +1,6 @@
 import cloudinary,{UploadApiResponse, UploadApiErrorResponse} from  'cloudinary';
 
-//filename-base64
+//any file-base64 image
 export function uploadFile(filename:string,public_id?:string,overwrite?:boolean,invalidate?:boolean) : Promise<UploadApiResponse|UploadApiErrorResponse|undefined>{
   return new Promise((resolve)=>{
     //cloudinary.v2.upload(file,{options},callbackafterupload)
