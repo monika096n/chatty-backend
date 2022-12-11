@@ -3,10 +3,10 @@ import {Application,json,urlencoded,Response,Request,NextFunction} from 'express
 import { config } from '@root/config';
 import * as http from 'http';
 import  cookieSession from 'cookie-session';
-import   helmet from 'helmet';
-import  hpp from 'hpp';
-import cors from 'cors';
-import compression from 'compression';
+import   helmet from 'helmet';//hides sensitive headers
+import  hpp from 'hpp';//http-parameter-populated
+import cors from 'cors';//cross-origin request allowance
+import compression from 'compression'; //compress the data sent and receive
 import { Server } from 'socket.io'; //socket.io.Server connection
 import { createClient } from 'redis'; //redis for fetching instant chats
 import { createAdapter } from '@socket.io/redis-adapter';
