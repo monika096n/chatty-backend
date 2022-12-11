@@ -1,6 +1,6 @@
 /* eslint-disable quotes */
 import {Application,json,urlencoded,Response,Request,NextFunction} from 'express';
-import { config } from './config';
+import { config } from '@root/config';
 import * as http from 'http';
 import  cookieSession from 'cookie-session';
 import   helmet from 'helmet';
@@ -11,7 +11,7 @@ import { Server } from 'socket.io'; //socket.io.Server connection
 import { createClient } from 'redis'; //redis for fetching instant chats
 import { createAdapter } from '@socket.io/redis-adapter';
 //redis adapter connection for direct communication between chats and redis
-import applicationRoutes from './routes';
+import applicationRoutes from '@root/routes';
 import * as HTTP_STATUS_CODE from 'http-status-codes';
 import {CustomError,IErrorResponse} from '@globals/helpers/errorHandler';
 import * as bunyanLogger  from 'bunyan';
